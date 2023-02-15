@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - .*
+      - '*'
 
 jobs:
   # Create the Github Release™ so the packages have something to be uploaded to
