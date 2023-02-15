@@ -1,5 +1,5 @@
 [package]
-name = "two-binz"
+name = "evil-workspace"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,4 +9,4 @@ edition = "2021"
 
 
 [workspace]
-members = ["third-bin", "test-bin"]
+members = ["third-bin", "test-bin", "many-bin", "some-lib", "some-cdylib"]
