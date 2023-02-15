@@ -1,8 +1,5 @@
 name: Release
 
-permissions:
-  contents: write
-  
 on:
   push:
     tags:
@@ -17,5 +14,3 @@ jobs:
       - name: blah
         run: |
           echo "i ran!"
-
-
