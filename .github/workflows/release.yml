@@ -58,7 +58,7 @@ jobs:
           cat dist-manifest.json
         
           # Upload the manifest to the Github Release™
-          gh release upload ${{ needs.create-release.outputs.tag }} dist-manifest.json
+          gh release upload v0.5.1 dist-manifest.json
           echo "uploaded manifest!"
         
           # Edit the Github Release™ title/body to match what cargo-dist thinks it should be
