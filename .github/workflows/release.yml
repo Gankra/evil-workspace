@@ -55,18 +55,18 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: upload manifest
         run: |
-          cargo dist manifest --tag=v0.5.2 --artifacts=all --no-local-paths --output-format=json > dist-manifest.json
+          cargo dist manifest --tag=${{  github.ref_name }} --artifacts=all --no-local-paths --output-format=json > dist-manifest.json
           echo "dist manifest ran successfully"
           cat dist-manifest.json
         
           # Upload the manifest to the Github Release™
-          gh release upload v0.5.2 dist-manifest.json
+          gh release upload ${{  github.ref_name }} dist-manifest.json
           echo "uploaded manifest!"
         
           # Edit the Github Release™ title/body to match what cargo-dist thinks it should be
           ANNOUNCEMENT_TITLE=$(cat dist-manifest.json | jq --raw-output ".announcement_title")
-          cat dist-manifest.json | jq --raw-output ".releases[].announcement_github_body" > new_dist_announcement.md
-          gh release edit v0.5.2 --title="$ANNOUNCEMENT_TITLE" --notes-file=new_dist_announcement.md
+          cat dist-manifest.json | jq --raw-output ".announcement_github_body" > new_dist_announcement.md
+          gh release edit ${{  github.ref_name }} --title="$ANNOUNCEMENT_TITLE" --notes-file=new_dist_announcement.md
           echo "updated announcement!"
 
   # Build and packages all the things
