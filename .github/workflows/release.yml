@@ -55,7 +55,7 @@ jobs:
           ANNOUNCEMENT_TITLE=$(cat dist-manifest.json | jq --raw-output ".announcement_title")
           IS_PRERELEASE="false"
           cat dist-manifest.json | jq --raw-output ".announcement_github_body" > new_dist_announcement.md
-          gh release create ${{  github.ref_name }} --draft --prerelease=$IS_PRELEASE --title="$ANNOUNCEMENT_TITLE" --notes-file=new_dist_announcement.md
+          gh release create ${{  github.ref_name }} --draft --prerelease="$IS_PRERELEASE" --title="$ANNOUNCEMENT_TITLE" --notes-file=new_dist_announcement.md
           echo "updated announcement!"
 
           # Upload the manifest to the Github Release™
