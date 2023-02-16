@@ -40,7 +40,7 @@ on:
   push:
     tags:
       # TODO: test that this better filter works: *-?v[0-9]+*
-      - '*'
+      - '*-?v[0-9]+*'
 
 jobs:
   # Create the Github Release™ so the packages have something to be uploaded to
