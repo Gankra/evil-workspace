@@ -1,8 +1,8 @@
 # CI that:
 #
 # * checks for a Git Tag that looks like a release
-# * creates a Github Release™
-# * builds binaries/artifacts with cargo-dist
+# * creates a Github Release™ and fills in its text
+# * builds artifacts with cargo-dist (executable-zips, installers)
 # * uploads those artifacts to the Github Release™
 #
 # Note that the Github Release™ will be created before the artifacts,
@@ -39,7 +39,6 @@ permissions:
 on:
   push:
     tags:
-      # TODO: test that this better filter works: *-?v[0-9]+*
       - '*-?v[0-9]+*'
 
 jobs:
@@ -53,7 +52,7 @@ jobs:
       - name: Install Rust
         run: rustup update 1.67.1 && rustup default 1.67.1
       - name: Install cargo-dist
-        run: cargo install --git https://github.com/axodotdev/cargo-dist/ --branch=config cargo-dist
+        run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.0.3-prerelease02/cargo-dist-v0.0.3-prerelease02-installer.sh | sh
       - name: Create Release
         run: |
           cargo dist manifest --tag=${{ github.ref_name }} --artifacts=all --no-local-paths --output-format=json > dist-manifest.json
@@ -80,16 +79,16 @@ jobs:
         include: 
         - os: ubuntu-20.04
           dist-args: --artifacts=global
-          install-dist: cargo install --git https://github.com/axodotdev/cargo-dist/ --branch=config cargo-dist
+          install-dist: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.0.3-prerelease02/cargo-dist-v0.0.3-prerelease02-installer.sh | sh
         - os: macos-11
           dist-args: --artifacts=local --target=x86_64-apple-darwin 
-          install-dist: cargo install --git https://github.com/axodotdev/cargo-dist/ --branch=config cargo-dist
+          install-dist: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.0.3-prerelease02/cargo-dist-v0.0.3-prerelease02-installer.sh | sh
         - os: ubuntu-20.04
           dist-args: --artifacts=local --target=x86_64-unknown-linux-gnu 
-          install-dist: cargo install --git https://github.com/axodotdev/cargo-dist/ --branch=config cargo-dist
+          install-dist: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.0.3-prerelease02/cargo-dist-v0.0.3-prerelease02-installer.sh | sh
         - os: windows-2019
           dist-args: --artifacts=local --target=x86_64-pc-windows-msvc 
-          install-dist: cargo install --git https://github.com/axodotdev/cargo-dist/ --branch=config cargo-dist
+          install-dist: irm  https://github.com/axodotdev/cargo-dist/releases/download/v0.0.3-prerelease02/cargo-dist-v0.0.3-prerelease02-installer.ps1 | iex
 
     runs-on: ${{ matrix.os }}
     env:
