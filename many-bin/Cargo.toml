@@ -10,5 +10,3 @@ name = "cargo-many-bin"
 
 [dependencies]
 
-[package.manifest.dist]
-dist = false
