@@ -55,8 +55,7 @@ jobs:
         run: rustup update 1.67.1 --no-self-update && rustup default 1.67.1
       - name: Install cargo-dist
         run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.0.3-prerelease02/cargo-dist-v0.0.3-prerelease02-installer.sh | sh
-      - name: Create Release
-        id: create-release
+      - id: create-release
         run: |
           cargo dist manifest --tag=${{ github.ref_name }} --artifacts=all --no-local-paths --output-format=json > dist-manifest.json
           echo "dist manifest ran successfully"
@@ -80,7 +79,7 @@ jobs:
   # Build and packages all the things
   upload-artifacts:
     needs: create-release
-    if: ${{ needs.create-release.outputs.has-releases == "true" }}
+    if: ${{ needs.create-release.outputs.has-releases == 'true' }}
     strategy:
       matrix:
         # For these target platforms
