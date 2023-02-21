@@ -45,6 +45,8 @@ jobs:
   # Create the Github Release™ so the packages have something to be uploaded to
   create-release:
     runs-on: ubuntu-latest
+    outputs:
+      has-releases: ${{ steps.create-release.outputs.has-releases }}
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -54,6 +56,7 @@ jobs:
       - name: Install cargo-dist
         run: curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.0.3-prerelease02/cargo-dist-v0.0.3-prerelease02-installer.sh | sh
       - name: Create Release
+        id: create-release
         run: |
           cargo dist manifest --tag=${{ github.ref_name }} --artifacts=all --no-local-paths --output-format=json > dist-manifest.json
           echo "dist manifest ran successfully"
@@ -69,10 +72,15 @@ jobs:
           # Upload the manifest to the Github Release™
           gh release upload ${{ github.ref_name }} dist-manifest.json
           echo "uploaded manifest!"
+          
+          # Disable all the upload-artifacts tasks if we have no actual releases
+          HAS_RELEASES=$(cat dist-manifest.json | jq --raw-output ".releases != null")
+          echo "has-releases=$HAS_RELEASES" >> "$GITHUB_OUTPUT"
 
   # Build and packages all the things
   upload-artifacts:
     needs: create-release
+    if: ${{ needs.create-release.outputs.has-releases == "true" }}
     strategy:
       matrix:
         # For these target platforms
