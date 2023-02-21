@@ -73,7 +73,7 @@ jobs:
           echo "uploaded manifest!"
           
           # Disable all the upload-artifacts tasks if we have no actual releases
-          HAS_RELEASES=$(cat dist-manifest.json | jq --raw-output ".releases == null")
+          HAS_RELEASES=$(cat dist-manifest.json | jq --raw-output ".releases != null")
           echo "has-releases=$HAS_RELEASES" >> "$GITHUB_OUTPUT"
 
   # Build and packages all the things
