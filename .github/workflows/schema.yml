@@ -24,6 +24,8 @@ on:
 jobs:
   web:
     name: Add schema to release
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     runs-on: ubuntu-latest
     steps:
       # Setup
