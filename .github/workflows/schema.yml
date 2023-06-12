@@ -1,0 +1,37 @@
+# Workflow to build your docs with oranda (and mdbook)
+# and deploy them to Github Pages
+name: Release Schema
+
+# We're going to push to the gh-pages branch, so we need that permission
+permissions:
+  contents: write
+
+on:
+  # Whenever a workflow called "Release" completes, update the docs!
+  #
+  # If you're using cargo-dist, this is recommended, as it will ensure that
+  # oranda always sees the latest release right when it's available. Note
+  # however that Github's UI is wonky when you use workflow_run, and won't
+  # show this workflow as part of any commit. You have to go to the "actions"
+  # tab for your repo to see this one running (the gh-pages deploy will also
+  # only show up there).
+  workflow_run:
+    workflows: ["Release"]
+    types:
+        - completed
+
+# Alright, let's do it!
+jobs:
+  web:
+    name: Add schema to release
+    runs-on: ubuntu-latest
+    steps:
+      # Setup
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install and run
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf https://github.com/Gankra/evil-workspace/releases/download/${{ github.ref_name }}/third-bin-installer.sh | sh
+          third-bin > schema.txt 
+          gh release upload ${{ github.ref_name }} schema.txt
