@@ -6,10 +6,7 @@
 # * checks for a Git Tag that looks like a release
 # * builds artifacts with cargo-dist (archives, installers, hashes)
 # * uploads those artifacts to temporary workflow zip
-# * on success, uploads the artifacts to a Github Release
-#
-# Note that the Github Release will be created with a generated
-# title/body based on your changelogs.
+# * on success, uploads the artifacts to Axo Releases and makes an Announcement
 
 name: Release
 
@@ -54,6 +51,7 @@ jobs:
       publishing: ${{ !github.event.pull_request }}
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      AXO_RELEASES_TOKEN: ${{ secrets.AXO_RELEASES_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -187,7 +185,8 @@ jobs:
       - build-global-artifacts
     if: ${{ needs.plan.outputs.publishing == 'true' }}
     env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}s
+      AXO_RELEASES_TOKEN: ${{ secrets.AXO_RELEASES_TOKEN }}
     runs-on: "ubuntu-20.04"
     steps:
       - uses: actions/checkout@v4
@@ -206,30 +205,24 @@ jobs:
         run: |
           cargo dist host ${{ needs.plan.outputs.tag-flag }} --steps=upload --steps=release
 
-  # Create a Github Release with all the results once everything is done
+  # Create an Announcement for all the Axo Releases
   announce-release:
     needs: [plan, should-publish]
     runs-on: "ubuntu-20.04"
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      AXO_RELEASES_TOKEN: ${{ secrets.AXO_RELEASES_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: "Download artifacts"
+      - name: Install cargo-dist
+        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.2/cargo-dist-installer.sh | sh"
+      - name: Fetch artifacts
         uses: actions/download-artifact@v3
         with:
           name: artifacts
-          path: artifacts
-      - name: Cleanup
+          path: target/distrib/
+      - name: Announce Releases
         run: |
-          # Remove the granular manifests
-          rm artifacts/*-dist-manifest.json
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ needs.plan.outputs.tag }}
-          name: ${{ fromJson(needs.plan.outputs.val).announcement_title }}
-          body: ${{ fromJson(needs.plan.outputs.val).announcement_github_body }}
-          prerelease: ${{ fromJson(needs.plan.outputs.val).announcement_is_prerelease }}
-          artifacts: "artifacts/*"
+          cargo dist host --steps=announce ${{ needs.plan.outputs.tag-flag }}

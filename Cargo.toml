@@ -38,7 +38,8 @@ windows-archive = ".tar.gz"
 unix-archive = ".tar.gz"
 # Publish jobs to run in CI
 pr-run-mode = "plan"
-hosting = ["axodotdev"]
+# Where to host releases
+hosting = "axodotdev"
 
 # The profile that 'cargo dist' will build with
 [profile.dist]
