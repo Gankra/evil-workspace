@@ -1,7 +1,12 @@
 [package]
 name = "many-bin"
-version = "0.7.6"
+version = "0.8.0"
 edition = "2021"
+authors = ["Gankra"]
+
+[package.metadata.wix]
+upgrade-guid = "069E8F2E-C7EE-4F9D-8153-48A294220F8D"
+path-guid = "D113C62A-CE4F-4448-9ABE-FF1DE5E105CB"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
