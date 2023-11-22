@@ -1,6 +1,6 @@
 [package]
 name = "evil-workspace"
-version = "0.8.3"
+version = "0.8.4"
 edition = "2021"
 repository = "https://github.com/gankra/evil-workspace/"
 description = "pure evil"
