@@ -198,7 +198,8 @@ jobs:
     needs:
       - plan
       - build-global-artifacts
-    if: ${{ always() && needs.plan.outputs.publishing == 'true' && (needs.build-global-artifacts.result == 'skipped' || needs.build-global-artifacts.result == 'success') }}
+      - build-local-artifacts
+    if: ${{ always() && needs.plan.outputs.publishing == 'true' && (needs.build-global-artifacts.result == 'skipped' || needs.build-global-artifacts.result == 'success') && (needs.build-local-artifacts.result == 'skipped' || needs.build-local-artifacts.result == 'success') }}
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       AXO_RELEASES_TOKEN: ${{ secrets.AXO_RELEASES_TOKEN }}
@@ -268,7 +269,7 @@ jobs:
       - name: Cleanup
         run: |
           # Remove the granular manifests
-          rm artifacts/*-dist-manifest.json
+          rm -f artifacts/*-dist-manifest.json
       - name: Create Github Release
         uses: ncipollo/release-action@v1
         with:
