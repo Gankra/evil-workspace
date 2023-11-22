@@ -23,6 +23,7 @@ members = ["third-bin", "test-bin", "many-bin", "some-lib", "some-cdylib"]
 
 [workspace.metadata.release]
 shared-version = true
+tag-name = "v{{version}}"
 
 # Config for 'cargo dist'
 [workspace.metadata.dist]
