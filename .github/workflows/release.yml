@@ -61,7 +61,7 @@ jobs:
         with:
           submodules: recursive
       - name: Install cargo-dist
-        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.6/cargo-dist-installer.sh | sh"
+        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.7/cargo-dist-installer.sh | sh"
       # sure would be cool if github gave us proper conditionals...
       # so here's a doubly-nested ternary-via-truthiness to try to provide the best possible
       # functionality based on whether this is a pull_request, and whether it's from a fork.
@@ -156,7 +156,7 @@ jobs:
         with:
           submodules: recursive
       - name: Install cargo-dist
-        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.6/cargo-dist-installer.sh | sh"
+        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.7/cargo-dist-installer.sh | sh"
       # Get all the local artifacts for the global tasks to use (for e.g. checksums)
       - name: Fetch local artifacts
         uses: actions/download-artifact@v3
@@ -192,22 +192,32 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       AXO_RELEASES_TOKEN: ${{ secrets.AXO_RELEASES_TOKEN }}
     runs-on: "ubuntu-20.04"
+    outputs:
+      val: ${{ steps.host.outputs.manifest }}
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Install cargo-dist
-        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.6/cargo-dist-installer.sh | sh"
+        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.7/cargo-dist-installer.sh | sh"
       # Fetch artifacts from scratch-storage to upload them to permanent storage
       - name: Fetch artifacts
         uses: actions/download-artifact@v3
         with:
           name: artifacts
           path: target/distrib/
-      - id: cargo-dist
+      - id: host
         shell: bash
         run: |
-          cargo dist host ${{ needs.plan.outputs.tag-flag }} --steps=upload --steps=release
+          cargo dist host ${{ needs.plan.outputs.tag-flag }} --steps=upload --steps=release --output-format=json > dist-manifest.json
+          echo "artifacts uploaded and released successfully"
+          cat dist-manifest.json
+          echo "manifest=$(jq -c "." dist-manifest.json)" >> "$GITHUB_OUTPUT"
+      - name: "Upload dist-manifest.json"
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifacts
+          path: dist-manifest.json
 
   # Create an Announcement for all the Axo Releases
 
@@ -223,7 +233,7 @@ jobs:
         with:
           submodules: recursive
       - name: Install cargo-dist
-        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.6/cargo-dist-installer.sh | sh"
+        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.7/cargo-dist-installer.sh | sh"
       - name: Fetch Axo Artifacts
         uses: actions/download-artifact@v3
         with:
@@ -245,7 +255,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ needs.plan.outputs.tag }}
-          name: ${{ fromJson(needs.plan.outputs.val).announcement_title }}
-          body: ${{ fromJson(needs.plan.outputs.val).announcement_github_body }}
-          prerelease: ${{ fromJson(needs.plan.outputs.val).announcement_is_prerelease }}
+          name: ${{ fromJson(needs.should-publish.outputs.val).announcement_title }}
+          body: ${{ fromJson(needs.should-publish.outputs.val).announcement_github_body }}
+          prerelease: ${{ fromJson(needs.should-publish.outputs.val).announcement_is_prerelease }}
           artifacts: "artifacts/*"
