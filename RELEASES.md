@@ -1,3 +1,10 @@
+# Version 0.8.4 (2023-11-22)
+
+alas me mateys, we release once more
+
+😭 alas 😭
+
+
 # Version 0.8.3 (2023-11-22)
 
 AVAST YE MATEYS
