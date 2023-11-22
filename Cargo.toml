@@ -45,6 +45,7 @@ unix-archive = ".tar.gz"
 pr-run-mode = "plan"
 # Where to host releases
 hosting = ["axodotdev", "github"]
+allow-dirty = ["ci"]
 
 # The profile that 'cargo dist' will build with
 [profile.dist]
