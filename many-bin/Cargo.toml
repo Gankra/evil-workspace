@@ -3,6 +3,8 @@ name = "many-bin"
 version = "0.8.1"
 edition = "2021"
 authors = ["Gankra"]
+repository = "https://github.com/gankra/evil-workspace/"
+description = "many pure evil"
 
 [package.metadata.wix]
 upgrade-guid = "069E8F2E-C7EE-4F9D-8153-48A294220F8D"

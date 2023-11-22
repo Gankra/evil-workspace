@@ -3,6 +3,8 @@ name = "third-bin"
 version = "0.8.1"
 edition = "2021"
 authors = ["Gankra"]
+repository = "https://github.com/gankra/evil-workspace/"
+description = "pure evil the third"
 
 [package.metadata.wix]
 upgrade-guid = "68E18E3E-559F-473B-ACD1-4CDB4F094B8F"

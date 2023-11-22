@@ -69,6 +69,7 @@
 
         <Package Id='*'
             Keywords='Installer'
+            Description='pure evil'
             Manufacturer='Gankra'
             InstallerVersion='450'
             Languages='1033'
