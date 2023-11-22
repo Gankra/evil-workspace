@@ -61,7 +61,7 @@ jobs:
         with:
           submodules: recursive
       - name: Install cargo-dist
-        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.8/cargo-dist-installer.sh | sh"
+        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.9/cargo-dist-installer.sh | sh"
       # sure would be cool if github gave us proper conditionals...
       # so here's a doubly-nested ternary-via-truthiness to try to provide the best possible
       # functionality based on whether this is a pull_request, and whether it's from a fork.
@@ -84,7 +84,7 @@ jobs:
     name: build-local-artifacts (${{ join(matrix.targets, ', ') }})
     # Let the initial task tell us to not run (currently very blunt)
     needs: plan
-    if: ${{ fromJson(needs.plan.outputs.val).releases != null && (needs.plan.outputs.publishing == 'true' || fromJson(needs.plan.outputs.val).ci.github.pr_run_mode == 'upload') }}
+    if: ${{ fromJson(needs.plan.outputs.val).artifacts != null && (needs.plan.outputs.publishing == 'true' || fromJson(needs.plan.outputs.val).ci.github.pr_run_mode == 'upload') }}
     strategy:
       fail-fast: false
       # Target platforms/runners are computed by cargo-dist in create-release.
@@ -158,7 +158,7 @@ jobs:
         with:
           submodules: recursive
       - name: Install cargo-dist
-        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.8/cargo-dist-installer.sh | sh"
+        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.9/cargo-dist-installer.sh | sh"
       # Get all the local artifacts for the global tasks to use (for e.g. checksums)
       - name: Fetch local artifacts
         uses: actions/download-artifact@v3
@@ -198,7 +198,8 @@ jobs:
     needs:
       - plan
       - build-global-artifacts
-    if: ${{ needs.plan.outputs.publishing == 'true' }}
+      - build-local-artifacts
+    if: ${{ always() && needs.plan.outputs.publishing == 'true' && (needs.build-global-artifacts.result == 'skipped' || needs.build-global-artifacts.result == 'success') && (needs.build-local-artifacts.result == 'skipped' || needs.build-local-artifacts.result == 'success') }}
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       AXO_RELEASES_TOKEN: ${{ secrets.AXO_RELEASES_TOKEN }}
@@ -210,7 +211,7 @@ jobs:
         with:
           submodules: recursive
       - name: Install cargo-dist
-        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.8/cargo-dist-installer.sh | sh"
+        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.9/cargo-dist-installer.sh | sh"
       # Fetch artifacts from scratch-storage
       - name: Fetch artifacts
         uses: actions/download-artifact@v3
@@ -251,7 +252,7 @@ jobs:
         with:
           submodules: recursive
       - name: Install cargo-dist
-        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.8/cargo-dist-installer.sh | sh"
+        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.5.0-prerelease.9/cargo-dist-installer.sh | sh"
       - name: Fetch Axo Artifacts
         uses: actions/download-artifact@v3
         with:
@@ -268,7 +269,7 @@ jobs:
       - name: Cleanup
         run: |
           # Remove the granular manifests
-          rm artifacts/*-dist-manifest.json
+          rm -f artifacts/*-dist-manifest.json
       - name: Create Github Release
         uses: ncipollo/release-action@v1
         with:

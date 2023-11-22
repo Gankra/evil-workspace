@@ -24,6 +24,12 @@ WE BE HAVING RELEASE NOTES IN THIS HERE RELEASE
 
 ✨ wow ✨
 
+# Version 0.7.9 (2023-11-22)
+
+RETROACTIVE LIB RELEASE?
+
+Could BE!!!!
+
 # Version 0.5.6 (2023-02-15)
 
 Here's some release notes for this project that cargo-dist should hopefully pickup and include in the Github Release!
