@@ -1,12 +1,16 @@
 [package]
 name = "third-bin"
-version = "0.8.0"
+version = "0.8.5"
 edition = "2021"
 authors = ["Gankra"]
+repository = "https://github.com/gankra/evil-workspace/"
+description = "pure evil the third"
 
 [package.metadata.wix]
 upgrade-guid = "68E18E3E-559F-473B-ACD1-4CDB4F094B8F"
 path-guid = "583AAF58-EA9E-44D4-BC90-E6786146317E"
+license = false
+eula = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

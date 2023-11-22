@@ -1,13 +1,17 @@
 [package]
 name = "evil-workspace"
-version = "0.8.0"
+version = "0.8.5"
 edition = "2021"
 repository = "https://github.com/gankra/evil-workspace/"
+description = "pure evil"
+license = "MIT"
 authors = ["Gankra"]
 
 [package.metadata.wix]
 upgrade-guid = "DB21E74E-06C1-47C5-BD95-D1B71B512A5B"
 path-guid = "5CF98729-3B58-4F34-9E8E-84734B250E6D"
+license = false
+eula = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -19,11 +23,12 @@ members = ["third-bin", "test-bin", "many-bin", "some-lib", "some-cdylib"]
 
 [workspace.metadata.release]
 shared-version = true
+tag-name = "v{{version}}"
 
 # Config for 'cargo dist'
 [workspace.metadata.dist]
 # The preferred cargo-dist version to use in CI (Cargo.toml SemVer syntax)
-cargo-dist-version = "0.5.0-prerelease.2"
+cargo-dist-version = "0.5.0-prerelease.8"
 # CI backends to support
 ci = ["github"]
 # The installers to generate for each app
@@ -38,6 +43,9 @@ windows-archive = ".tar.gz"
 unix-archive = ".tar.gz"
 # Publish jobs to run in CI
 pr-run-mode = "plan"
+# Where to host releases
+hosting = ["axodotdev", "github"]
+allow-dirty = ["ci"]
 
 # The profile that 'cargo dist' will build with
 [profile.dist]
